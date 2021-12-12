@@ -60,6 +60,7 @@ public class LocationMap implements Map<Integer, Location> {
         int count = 0;
         while ( count < llocationIds.size()){
             Integer currentLocationId = llocationIds.get(0);
+            System.out.println(currentLocationId);
 
         }
 

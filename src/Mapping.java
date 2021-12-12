@@ -73,9 +73,15 @@ public class Mapping {
              * use the FileLogger and ConsoleLogger objects
              */
 
+
+
             /** TODO
              * verify if the location is exit
              */
+            if(location == 0)
+            {
+                System.out.println(locationMap.get(locationMap.map));
+            }
 
             /** TODO
              * get a map of the exits for the location
@@ -115,6 +121,9 @@ public class Mapping {
          * create a Mapping object
          * start the game
          */
+
+        Mapping mapping = new Mapping();
+
     }
 
 }
