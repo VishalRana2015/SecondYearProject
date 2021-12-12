@@ -42,6 +42,19 @@ public class FileLogger implements Logger {
 
     @Override
     public void log (String message) {
+
+        try
+        {
+            File f = new File(FILE_LOGGER_NAME);
+            FileWriter fw = new FileWriter(f);
+            fw.append(message);
+        }
+        catch(Exception e)
+        {
+            System.out.println("Exception Thrown!!");
+            e.printStackTrace();
+        }
+
         /** TODO
          * create a new FileWriter in append mode
          * write the message to file

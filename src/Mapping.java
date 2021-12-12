@@ -9,10 +9,12 @@ public class Mapping {
     /** TODO
      * create a static LocationMap object
      */
+    static  LocationMap locationMap;
 
     /** TODO
      * create a vocabulary HashMap to store all directions a user can go
      */
+    HashMap<String, String> vocabulary;
 
     /** TODO
      * create a FileLogger object
@@ -35,7 +37,7 @@ public class Mapping {
         this.consoleLogger = new ConsoleLogger();
 
 
-        HashMap<String, String> vocabulary = new HashMap<>();
+        vocabulary = new HashMap<>();
 
         vocabulary.put("NORTH", "N");
         vocabulary.put("SOUTH", "S");
@@ -62,6 +64,7 @@ public class Mapping {
         /**
          * initialise a location variable with the INITIAL_LOCATION
          */
+        int location = INITIAL_LOCATION;
 
         while (true) {
 
