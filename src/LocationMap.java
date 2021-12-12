@@ -132,7 +132,8 @@ public class LocationMap implements Map<Integer, Location> {
     }
 
     @Override
-    public void putAll(Map<? extends Integer, ? extends Location> m) {
+    public void putAll(Map<? extends Integer, ? extends Location> m)
+    {
         //TODO
         map.putAll(m);
     }
