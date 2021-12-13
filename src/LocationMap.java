@@ -1,4 +1,5 @@
 import javax.annotation.processing.Filer;
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -15,11 +16,10 @@ public class LocationMap implements Map<Integer, Location> {
     static Integer POT_LOCATION = 141;
     static HashMap<Integer,Location> locations = new HashMap<>();
     static {
-        System.out.println("Executing static block");
         /** TODO
          * create a FileLogger object
          */
-        FileLogger fileLogger = new FileLogger();
+        FileLogger fileLogger = FileLogger.getFileLogger();
         ConsoleLogger consoleLogger = new ConsoleLogger();
 
         /** TODO
@@ -48,7 +48,7 @@ public class LocationMap implements Map<Integer, Location> {
         dlocationIds = new ArrayList<>();
         ddestinations = new ArrayList<>();
         ddirections = new ArrayList<>();
-        System.out.println("Reached try block");
+
         try{
 //            FileReader reader = new FileReader(LOCATIONS_FILE_NAME);
             Scanner sc = new Scanner(LOCATIONS_FILE_NAME);
@@ -57,14 +57,13 @@ public class LocationMap implements Map<Integer, Location> {
             String message = "Available locations:";
             consoleLogger.log(message);
             fileLogger.log(message);
-            System.out.println("Starting reading file");
+
             String line;
             while( ( line = bf.readLine()) != null){
-                System.out.println("Read first line");
-                String temp = line;
-                String[] temps = temp.split(",");
-                Integer location = Integer.parseInt(temps[0]);
-                String description = temps[1];
+
+                Integer firstIndexOfComma = line.indexOf(",");
+                Integer location = Integer.parseInt(line.substring(0,firstIndexOfComma));
+                String description = line.substring(firstIndexOfComma+1);
                 llocationIds.add(location);
                 descriptions.add(description);
                 message = location + ": " + description;
@@ -72,16 +71,12 @@ public class LocationMap implements Map<Integer, Location> {
                 fileLogger.log(message);
             }
 
-
-            System.out.println("Reading Directions file.");
             bf = new BufferedReader(new FileReader( new File(DIRECTIONS_FILE_NAME)));
             message = "Available directions:";
             consoleLogger.log(message);
             fileLogger.log(message);
-
             while(  ( line = bf.readLine()) != null){
-                String temp = line;
-                String[] temps = temp.split(",");
+                String[] temps = line.split(",");
                 Integer location, destination;
                 String direction;
                 location = Integer.parseInt(temps[0]);
@@ -98,13 +93,12 @@ public class LocationMap implements Map<Integer, Location> {
         catch (Exception exp){
             System.out.println("Exception thrown ");
         }
-        System.out.println("Ended try block...");
         locations = new HashMap<>();
         for ( int i =0; i < llocationIds.size(); i++){
             HashMap<String, Integer> exits = null;
             for ( int j =0; j < dlocationIds.size(); j++){
-                if ( llocationIds.get(i) == dlocationIds.get(i)){
-                    // match
+                //System.out.println("loctionId : "+ llocationIds.get(i) + ", dlocation : " + dlocationIds.get(j));
+                if ( llocationIds.get(i).equals(dlocationIds.get(j))){
                     if ( exits == null){
                         exits = new HashMap<>();
                     }

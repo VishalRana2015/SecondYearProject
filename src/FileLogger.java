@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileLogger implements Logger {
-    private static final String FILE_LOGGER_NAME =  "DemoStudentFileOutput.txt";
+    private static final String FILE_LOGGER_NAME =  "StudentFileOutput.txt";
 
     static
     {
@@ -40,15 +40,32 @@ public class FileLogger implements Logger {
 
 
     }
+    FileWriter fw ;
+    private static FileLogger fileLogger;
+    public static FileLogger getFileLogger(){
+        if ( fileLogger == null){
+            fileLogger = new FileLogger();
+        }
+        return fileLogger;
+    }
 
+    private FileLogger( ){
+        try{
+            fw = new FileWriter(new File(FILE_LOGGER_NAME));
+        }
+        catch ( IOException e){
+            System.out.println("Something went wrong while opening file " + FILE_LOGGER_NAME);
+            System.out.println(e);
+        }
+    }
     @Override
     public void log (String message) {
 
         try
         {
-            File f = new File(FILE_LOGGER_NAME);
-            FileWriter fw = new FileWriter(f);
-            fw.append(message);
+            this.fw.append(message);
+            this.fw.append("\n");
+            this.fw.flush();
         }
         catch(Exception e)
         {

@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
 
@@ -13,25 +14,31 @@ public class Mapping {
     /** TODO
      * create a vocabulary HashMap to store all directions a user can go
      */
-    HashMap<String, Directions> vocabulary;
+    HashMap<String, String> vocabulary;
 
     /** TODO
      * create a FileLogger object
      */
     FileLogger fileLogger;
-    int locationId ;
+    Integer currentLocationId ;
     /** TODO
      * create a ConsoleLogger object
      */
     ConsoleLogger consoleLogger;
-    static String NO_DIRECTION = "No direction available";
-    static String GOT_POT = "We got Gold Pot.";
-    enum Directions{
-        n, //
-        ne, e , se, s, sw, w, nw, q ;
+    static String DIRECTION_NOT_AVAILABLE = "You cannot go in that direction";
+    static String YOU_WON = "CONGRATULATIONS, YOU FOUND THE POT OF GOLD!";
+    static String NORTH = "N";
+    static String NORTH_EAST = "NE";
+    static String EAST = "E";
+    static String SOUTH_EAST = "SE";
+    static String SOUTH = "S";
+    static String SOUTH_WEST = "SW";
+    static String WEST = "W";
+    static String NORTH_WEST = "NW";
 
-
-    }
+    static String UP = "U";
+    static String DOWN = "D";
+    static String QUIT = "Q";
 
     public Mapping() {
         //vocabulary.put("QUIT", "Q"); //example
@@ -39,29 +46,45 @@ public class Mapping {
          * complete the vocabulary HashMap <Key, Value> with all directions.
          * use the directions.txt file and crosscheck with the ExpectedInput and ExpectedOutput files to find the keys and the values
          */
-        this.fileLogger = new FileLogger();
+        this.fileLogger = FileLogger.getFileLogger();
         this.consoleLogger = new ConsoleLogger();
 
 
         vocabulary = new HashMap<>();
 
-        vocabulary.put("NORTH", Directions.n);
-        vocabulary.put("NORTHEAST",Directions.ne);
-        vocabulary.put("EAST", Directions.e);
-        vocabulary.put("SOUTHEAST", Directions.se);
-        vocabulary.put("SOUTH", Directions.s);
-        vocabulary.put("SOUTHWEST", Directions.sw);
-        vocabulary.put("WEST", Directions.w);
-        vocabulary.put("NORTHWEST",Directions.nw);
+        vocabulary.put("NORTH", NORTH);
+        vocabulary.put("NORTHEAST",NORTH_EAST);
+        vocabulary.put("EAST", EAST);
+        vocabulary.put("SOUTHEAST", SOUTH_EAST);
+        vocabulary.put("SOUTH",SOUTH);
+        vocabulary.put("SOUTHWEST",SOUTH_WEST );
+        vocabulary.put("WEST", WEST);
+        vocabulary.put("NORTHWEST", NORTH_WEST);
 
-        vocabulary.put("QUIT", Directions.q);
+        vocabulary.put("N",NORTH);
 
+        vocabulary.put("NE", NORTH_EAST);
 
+        vocabulary.put("E",EAST);
 
+        vocabulary.put("SE", SOUTH_EAST);
 
+        vocabulary.put("S", SOUTH);
 
+        vocabulary.put("SW", SOUTH_WEST);
 
+        vocabulary.put("W", WEST);
 
+        vocabulary.put("NW", NORTH_WEST);
+
+        vocabulary.put("UP", UP);
+        vocabulary.put("U", UP);
+
+        vocabulary.put("DOWN", DOWN);
+        vocabulary.put("D", DOWN);
+
+        vocabulary.put("QUIT", QUIT);
+        vocabulary.put("Q", QUIT);
     }
 
     public void mapping() {
@@ -74,7 +97,7 @@ public class Mapping {
         /**
          * initialise a location variable with the INITIAL_LOCATION
          */
-        locationId = INITIAL_LOCATION;
+        currentLocationId = INITIAL_LOCATION;
 
         while (true) {
 
@@ -82,24 +105,34 @@ public class Mapping {
              * get the location and print its description to both console and file
              * use the FileLogger and ConsoleLogger objects
              */
-            Location location = locationMap.locations.get(locationId);
-            if ( location == null){
+            Location currentLocation = locationMap.locations.get(currentLocationId);
+            if ( currentLocation == null){
                 consoleLogger.log("Something went wrong, location is null");
                 return;
             }
-            consoleLogger.log(location.getDescription());
-            fileLogger.log(location.getDescription());
+            consoleLogger.log(currentLocation.getDescription());
+            fileLogger.log(currentLocation.getDescription());
 
 
             /** TODO
              * verify if the location is exit
              */
+            if ( currentLocationId == 0){
+                return;
+            }
+
+            if ( currentLocationId == LocationMap.POT_LOCATION){
+                consoleLogger.log(YOU_WON);
+                fileLogger.log(YOU_WON);
+                // still don't stop here. continue the loop
+            }
+
 
 
             /** TODO
              * get a map of the exits for the location
              */
-            Map<String, Integer> exists = location.getExits();
+            Map<String, Integer> exits = currentLocation.getExits();
 
 
             /** TODO
@@ -107,7 +140,7 @@ public class Mapping {
              * crosscheck with the ExpectedOutput files
              * Hint: you can use a StringBuilder to append the exits
              */
-            Iterator<String > iterator = exists.keySet().iterator();
+            Iterator<String > iterator = exits.keySet().iterator();
             StringBuilder builder = new StringBuilder();
             builder.append("Available exists are ");
             while ( iterator.hasNext()){
@@ -115,14 +148,12 @@ public class Mapping {
             }
             consoleLogger.log(builder.toString());
             fileLogger.log(builder.toString());
-
             /** TODO
              * input a direction
              * ensure that the input is converted to uppercase
              */
             String input ;
             input = sc.nextLine().toUpperCase();
-
             /** TODO
              * are we dealing with a letter / word for the direction to go to?
              * available inputs are: a letter(the HashMap value), a word (the HashMap key), a string of words that contains the key
@@ -133,34 +164,25 @@ public class Mapping {
              */
             String[] words = input.split(" ");
             boolean matched = false;
-            boolean win = false;
-            Integer destination = -1;
-            for ( int i = words.length - 1; i >= 0 && !matched; i--){
-                Iterator<String> itr = vocabulary.keySet().iterator();
-                while ( itr.hasNext() && !matched){
-                    String temp = itr.next();
-                    if ( temp.equals(words[i])){
-                        destination = exists.get(words[i]);
-                        if ( destination != null){
-                            matched = true;
-                            if( destination == LocationMap.POT_LOCATION){
-                                win = true;
-                            }
-                            locationId = destination;
-                            break;
-                        }
+            for ( int j = words.length -1 ; j >= 0; j--){
+                String direction = vocabulary.get(words[j]);
+                if ( direction != null){
+                    // User chose a valid direction
+                    // Now we will check, whether the given direction is available in the current location
+                    Integer destination = exits.get(direction);
+                    if( destination != null){
+                        // we got a available direction
+                        currentLocationId = destination;
+                        matched = true;
+                        break;
                     }
                 }
             }
-            if( !matched){
-                consoleLogger.log(NO_DIRECTION);
-                fileLogger.log(NO_DIRECTION);
+            if ( !matched){
+                consoleLogger.log(DIRECTION_NOT_AVAILABLE);
+                fileLogger.log(DIRECTION_NOT_AVAILABLE);
             }
-            if ( win){
-                consoleLogger.log(GOT_POT);
-                fileLogger.log(GOT_POT);
-                return;
-            }
+
             /** TODO
              * if user can go in that direction, then set the location to that direction
              * otherwise print an error message (to both console and file)
@@ -177,6 +199,13 @@ public class Mapping {
          */
         Mapping mapping = new Mapping();
         mapping.mapping();
+        //print(LocationMap.locations.get(134).getExits());
     }
-
+    static void print(Map<String,Integer> map){
+        Iterator<String> itr = map.keySet().iterator();
+        while ( itr.hasNext()){
+            String temp = itr.next();
+           // System.out.println("key,value : " + temp +"," + map.get(temp) );
+        }
+    }
 }
