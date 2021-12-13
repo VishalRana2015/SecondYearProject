@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileLogger implements Logger {
-    private static final String FILE_LOGGER_NAME =  "StudentFileOutput.txt";
+    private static final String FILE_LOGGER_NAME =  "DemoStudentFileOutput.txt";
 
     static
     {
@@ -24,7 +24,8 @@ public class FileLogger implements Logger {
             }
             else
             {
-                if(f.createNewFile())
+                File f1 = new File(FILE_LOGGER_NAME);
+                if(f1.createNewFile())
                 {
                     System.out.println("File is created!!");
                 }

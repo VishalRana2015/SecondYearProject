@@ -20,10 +20,12 @@ public class Location {
          */
         this.locationId = locationId;
         this.desc = description;
-        this.exits = exits;
         if ( exits == null){
-            exits = new HashMap<>();
-            exits.put("Q", 0);
+            this.exits = new HashMap<>();
+            this.exits.put("Q", 0);
+        }
+        else {
+            this.exits = exits;
         }
         /** TODO
          * if exits are not null, set the exit
