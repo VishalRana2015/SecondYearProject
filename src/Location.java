@@ -1,7 +1,4 @@
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class Location {
 
@@ -12,9 +9,9 @@ public class Location {
 
     private final Integer locationId;
     private final String desc;
-    private  final Map<String,Integer> exits ;
+    private  final HashMap<String,Integer> exits ;
 
-    public Location(int locationId, String description, Map<String, Integer> exits) {
+    public Location(int locationId, String description, HashMap<String, Integer> exits) {
         /** TODO
          * set the locationId and the description
          */
@@ -54,18 +51,12 @@ public class Location {
         return this.desc;
     }
 
-    public Map<String, Integer> getExits() {
+    public HashMap<String, Integer> getExits() {
         /** TODO
          * complete getter to return a copy of exits
          * (preventing modification of exits from outside the Location instance)
          */
-        HashMap<String,Integer> copyExists = new HashMap<>();
-        Set<String> keySet = this.exits.keySet();
-        Iterator<String> keySetIterator = keySet.iterator();
-        while( keySetIterator.hasNext()){
-            String temp = keySetIterator.next();
-            copyExists.put(temp, exits.get(temp));
-        }
-        return copyExists;
+        return (HashMap<String, Integer>) this.exits.clone();
+
     }
 }

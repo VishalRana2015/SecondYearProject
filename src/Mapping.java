@@ -140,11 +140,10 @@ public class Mapping {
              * crosscheck with the ExpectedOutput files
              * Hint: you can use a StringBuilder to append the exits
              */
-            Iterator<String > iterator = exits.keySet().iterator();
             StringBuilder builder = new StringBuilder();
-            builder.append("Available exists are ");
-            while ( iterator.hasNext()){
-                builder.append(iterator.next() + ", ");
+            builder.append("Available exits are ");
+            for ( String direction : exits.keySet()){
+                builder.append(direction + ", ");
             }
             consoleLogger.log(builder.toString());
             fileLogger.log(builder.toString());
@@ -199,13 +198,6 @@ public class Mapping {
          */
         Mapping mapping = new Mapping();
         mapping.mapping();
-        //print(LocationMap.locations.get(134).getExits());
     }
-    static void print(Map<String,Integer> map){
-        Iterator<String> itr = map.keySet().iterator();
-        while ( itr.hasNext()){
-            String temp = itr.next();
-           // System.out.println("key,value : " + temp +"," + map.get(temp) );
-        }
-    }
+
 }
